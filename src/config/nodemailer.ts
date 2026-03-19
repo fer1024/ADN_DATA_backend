@@ -5,10 +5,11 @@ dotenv.config()
 const config = () => {
     return {
         host: process.env.SMTP_HOST,
-        port: +process.env.SMTP_PORT,
+        port: Number(process.env.SMTP_PORT),
+        secure: true, // Obligatorio para el puerto 465
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
         }
     }
 }

@@ -94,7 +94,7 @@ export class AuthEmail {
         `)
 
         const info = await transporter.sendMail({
-            from: 'ADN DATA <admin.adn.data@gmail.com>',
+            from: 'ADN DATA <hnopssita@gmail.com>',
             to: user.email,
             subject: 'ADN DATA — Confirma tu cuenta',
             text: `Hola ${user.name}, tu código de confirmación es: ${user.token}. Expira en 30 minutos.`,
@@ -134,7 +134,7 @@ export class AuthEmail {
         `)
 
         const info = await transporter.sendMail({
-            from: 'ADN DATA <admin.adn.data@gmail.com>',
+            from: 'ADN DATA <hnopssita@gmail.com>',
             to: user.email,
             subject: 'ADN DATA — Restablece tu contraseña',
             text: `Hola ${user.name}, tu código para restablecer tu contraseña es: ${user.token}. Expira en 30 minutos.`,
