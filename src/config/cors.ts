@@ -2,8 +2,9 @@ import { CorsOptions } from 'cors' // <-- Esta es la línea que te falta
 
 const whitelist = [
   "http://localhost:5173",
-  process.env.FRONTEND_URL 
-]
+  process.env.FRONTEND_URL, // Intenta leer de Render
+  "https://tayka.shop"      // Respaldo directo (Hardcoded)
+].filter(Boolean);
 
 export const corsConfig: CorsOptions = {
   origin: function (origin, callback) {
