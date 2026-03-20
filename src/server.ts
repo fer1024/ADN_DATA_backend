@@ -9,7 +9,7 @@ import projectRoutes from './routes/projectRoutes'
 import phaseRoutes from "./routes/phaseRoutes"
 
 dotenv.config()
-connectDB()
+connectDB() 
 
 const app = express()
 app.use(cors(corsConfig))
