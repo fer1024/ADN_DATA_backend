@@ -66,81 +66,94 @@ const emailWrapper = (content: string) => `
 export class AuthEmail {
 
     static sendConfirmationEmail = async (user: IEmail) => {
-        const html = emailWrapper(`
-            <div class="body">
-                <p class="greeting">Hola, ${user.name} 👋</p>
-                <p class="message">
-                    Tu cuenta en <strong style="color:#f1f5f9">ADN DATA</strong> ha sido creada exitosamente.<br>
-                    Para activarla e iniciar sesión, ingresa el código de confirmación que encontrarás a continuación.
-                </p>
+        try {
+            // Limpiamos la URL para evitar dobles barras //
+            const frontendUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://tayka.shop';
 
-                <div class="token-box">
-                    <p class="token-label">Código de confirmación</p>
-                    <p class="token-value">${user.token}</p>
-                    <p class="token-expiry">⏱ Este código expira en 30 minutos</p>
+            const html = emailWrapper(`
+                <div class="body">
+                    <p class="greeting">Hola, ${user.name} 👋</p>
+                    <p class="message">
+                        Tu cuenta en <strong style="color:#f1f5f9">ADN DATA</strong> ha sido creada exitosamente.<br>
+                        Para activarla e iniciar sesión, ingresa el código de confirmación que encontrarás a continuación.
+                    </p>
+
+                    <div class="token-box">
+                        <p class="token-label">Código de confirmación</p>
+                        <p class="token-value">${user.token}</p>
+                        <p class="token-expiry">⏱ Este código expira en 30 minutos</p>
+                    </div>
+
+                    <div class="btn-wrapper">
+                        <a href="${frontendUrl}/auth/confirm-account" class="btn">
+                            Confirmar Cuenta
+                        </a>
+                    </div>
+
+                    <hr class="divider">
+                    <p class="message" style="font-size:12px;margin:0">
+                        Si no creaste esta cuenta, puedes ignorar este mensaje de forma segura.
+                    </p>
                 </div>
+            `)
 
-                <div class="btn-wrapper">
-                    <a href="${process.env.FRONTEND_URL}/auth/confirm-account" class="btn">
-                        Confirmar Cuenta
-                    </a>
-                </div>
+            const info = await transporter.sendMail({
+                from: '"ADN DATA" <hnopssita@gmail.com>', // Formato estándar
+                to: user.email,
+                subject: 'ADN DATA — Confirma tu cuenta',
+                text: `Hola ${user.name}, tu código de confirmación es: ${user.token}. Expira en 30 minutos.`,
+                html
+            })
 
-                <hr class="divider">
-                <p class="message" style="font-size:12px;margin:0">
-                    Si no creaste esta cuenta, puedes ignorar este mensaje de forma segura.
-                </p>
-            </div>
-        `)
-
-        const info = await transporter.sendMail({
-            from: 'ADN DATA <hnopssita@gmail.com>',
-            to: user.email,
-            subject: 'ADN DATA — Confirma tu cuenta',
-            text: `Hola ${user.name}, tu código de confirmación es: ${user.token}. Expira en 30 minutos.`,
-            html
-        })
-
-        console.log('Mensaje enviado', info.messageId)
+            console.log('✅ Correo de confirmación enviado:', info.messageId)
+        } catch (error) {
+            console.error('❌ Error en sendConfirmationEmail:', error);
+        }
     }
 
     static sendPasswordResetToken = async (user: IEmail) => {
-        const html = emailWrapper(`
-            <div class="body">
-                <p class="greeting">Hola, ${user.name}</p>
-                <p class="message">
-                    Recibimos una solicitud para restablecer la contraseña de tu cuenta en
-                    <strong style="color:#f1f5f9">ADN DATA</strong>.<br>
-                    Usa el código a continuación para crear una nueva contraseña.
-                </p>
+        try {
+            const frontendUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://tayka.shop';
 
-                <div class="token-box">
-                    <p class="token-label">Código de restablecimiento</p>
-                    <p class="token-value">${user.token}</p>
-                    <p class="token-expiry">⏱ Este código expira en 30 minutos</p>
+            const html = emailWrapper(`
+                <div class="body">
+                    <p class="greeting">Hola, ${user.name}</p>
+                    <p class="message">
+                        Recibimos una solicitud para restablecer la contraseña de tu cuenta en
+                        <strong style="color:#f1f5f9">ADN DATA</strong>.<br>
+                        Usa el código a continuación para crear una nueva contraseña.
+                    </p>
+
+                    <div class="token-box">
+                        <p class="token-label">Código de restablecimiento</p>
+                        <p class="token-value">${user.token}</p>
+                        <p class="token-expiry">⏱ Este código expira en 30 minutos</p>
+                    </div>
+
+                    <div class="btn-wrapper">
+                        <a href="${frontendUrl}/auth/new-password" class="btn">
+                            Restablecer Contraseña
+                        </a>
+                    </div>
+
+                    <hr class="divider">
+                    <p class="message" style="font-size:12px;margin:0">
+                        Si no solicitaste este cambio, ignora este mensaje.
+                    </p>
                 </div>
+            `)
 
-                <div class="btn-wrapper">
-                    <a href="${process.env.FRONTEND_URL}/auth/new-password" class="btn">
-                        Restablecer Contraseña
-                    </a>
-                </div>
+            const info = await transporter.sendMail({
+                from: '"ADN DATA" <hnopssita@gmail.com>',
+                to: user.email,
+                subject: 'ADN DATA — Restablece tu contraseña',
+                text: `Hola ${user.name}, tu código para restablecer tu contraseña es: ${user.token}. Expira en 30 minutos.`,
+                html
+            })
 
-                <hr class="divider">
-                <p class="message" style="font-size:12px;margin:0">
-                    Si no solicitaste este cambio, ignora este mensaje. Tu contraseña actual permanecerá sin cambios.
-                </p>
-            </div>
-        `)
-
-        const info = await transporter.sendMail({
-            from: 'ADN DATA <hnopssita@gmail.com>',
-            to: user.email,
-            subject: 'ADN DATA — Restablece tu contraseña',
-            text: `Hola ${user.name}, tu código para restablecer tu contraseña es: ${user.token}. Expira en 30 minutos.`,
-            html
-        })
-
-        console.log('Mensaje enviado', info.messageId)
+            console.log('✅ Correo de restablecimiento enviado:', info.messageId)
+        } catch (error) {
+            console.error('❌ Error en sendPasswordResetToken:', error);
+        }
     }
 }
