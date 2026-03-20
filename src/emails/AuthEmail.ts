@@ -1,10 +1,8 @@
-import { transporter } from "../config/nodemailer"
+import { Resend } from 'resend'
+import dotenv from 'dotenv'
+dotenv.config()
 
-interface IEmail {
-    email: string
-    name: string
-    token: string
-}
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const baseStyles = `
     body { margin: 0; padding: 0; background-color: #0f172a; font-family: Arial, sans-serif; }
@@ -63,11 +61,16 @@ const emailWrapper = (content: string) => `
 </body>
 </html>`
 
+interface IEmail {
+    email: string
+    name: string
+    token: string
+}
+
 export class AuthEmail {
 
     static sendConfirmationEmail = async (user: IEmail) => {
         try {
-            // Limpiamos la URL para evitar dobles barras //
             const frontendUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://tayka.shop';
 
             const html = emailWrapper(`
@@ -97,15 +100,18 @@ export class AuthEmail {
                 </div>
             `)
 
-            const info = await transporter.sendMail({
+            const { data, error } = await resend.emails.send({
                 from: 'ADN DATA <onboarding@resend.dev>',
                 to: user.email,
                 subject: 'ADN DATA — Confirma tu cuenta',
-                text: `Hola ${user.name}, tu código de confirmación es: ${user.token}. Expira en 30 minutos.`,
                 html
             })
 
-            console.log('✅ Correo de confirmación enviado:', info.messageId)
+            if (error) {
+                console.error('❌ Error en sendConfirmationEmail:', error)
+            } else {
+                console.log('✅ Correo de confirmación enviado:', data?.id)
+            }
         } catch (error) {
             console.error('❌ Error en sendConfirmationEmail:', error);
         }
@@ -143,15 +149,18 @@ export class AuthEmail {
                 </div>
             `)
 
-            const info = await transporter.sendMail({
+            const { data, error } = await resend.emails.send({
                 from: 'ADN DATA <onboarding@resend.dev>',
                 to: user.email,
                 subject: 'ADN DATA — Restablece tu contraseña',
-                text: `Hola ${user.name}, tu código para restablecer tu contraseña es: ${user.token}. Expira en 30 minutos.`,
                 html
             })
 
-            console.log('✅ Correo de restablecimiento enviado:', info.messageId)
+            if (error) {
+                console.error('❌ Error en sendPasswordResetToken:', error)
+            } else {
+                console.log('✅ Correo de restablecimiento enviado:', data?.id)
+            }
         } catch (error) {
             console.error('❌ Error en sendPasswordResetToken:', error);
         }
