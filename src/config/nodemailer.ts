@@ -1,12 +1,13 @@
-import nodemailer from 'nodemailer'; // Ya no debería marcar error en rojo
-import dotenv from 'dotenv';
-dotenv.config();
+import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const config = () => {
+    const port = Number(process.env.SMTP_PORT) || 587
     return {
         host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        secure: false, // Obligatorio para puerto 587
+        port,
+        secure: port === 465,
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS
@@ -17,4 +18,4 @@ const config = () => {
     }
 }
 
-export const transporter = nodemailer.createTransport(config());
+export const transporter = nodemailer.createTransport(config())
