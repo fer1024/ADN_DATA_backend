@@ -101,7 +101,7 @@ export class AuthEmail {
             `)
 
             const { data, error } = await resend.emails.send({
-                from: 'ADN DATA <onboarding@resend.dev>',
+                from: 'ADN DATA <admin@tayka.shop>',
                 to: user.email,
                 subject: 'ADN DATA — Confirma tu cuenta',
                 html
@@ -150,7 +150,7 @@ export class AuthEmail {
             `)
 
             const { data, error } = await resend.emails.send({
-                from: 'ADN DATA <onboarding@resend.dev>',
+                from: 'ADN DATA <admin@tayka.shop>',
                 to: user.email,
                 subject: 'ADN DATA — Restablece tu contraseña',
                 html
