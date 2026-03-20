@@ -3,17 +3,13 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const config = () => {
-    const port = Number(process.env.SMTP_PORT) || 587
     return {
-        host: process.env.SMTP_HOST,
-        port,
-        secure: port === 465,
+        host: 'smtp.resend.com',
+        port: 465,
+        secure: true,
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        },
-        tls: {
-            rejectUnauthorized: false
+            user: 'resend',
+            pass: process.env.RESEND_API_KEY
         }
     }
 }
