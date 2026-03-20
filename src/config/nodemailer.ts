@@ -1,18 +1,15 @@
-import nodemailer from 'nodemailer'
-import dotenv from 'dotenv'
-dotenv.config()
-
 const config = () => {
     return {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
-        secure: true, // Obligatorio para el puerto 465
+        secure: false, // CAMBIAR A FALSE PARA EL PUERTO 587
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS
+        },
+        tls: {
+            rejectUnauthorized: false // Esto evita errores de certificados en Render
         }
     }
 }
-
-export const transporter = nodemailer.createTransport(config());
 
