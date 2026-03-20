@@ -6,8 +6,8 @@ const config = () => {
     return {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
-        // Si usas el puerto 465, esto debe ser true. Si usas 587, debe ser false.
-        secure: process.env.SMTP_PORT === '465', 
+        // IMPORTANTE: secure debe ser false si usas el puerto 587
+        secure: false, 
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS
@@ -18,5 +18,5 @@ const config = () => {
     }
 }
 
-// ESTA PALABRA ES LA CLAVE:
+// CRÍTICO: Asegúrate de que esta línea esté al final y tenga la palabra "export"
 export const transporter = nodemailer.createTransport(config());
