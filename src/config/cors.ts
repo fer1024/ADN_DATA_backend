@@ -1,18 +1,20 @@
-import { CorsOptions } from 'cors' // <-- Esta es la línea que te falta
+import { CorsOptions } from 'cors'
 
 const whitelist = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL, // Intenta leer de Render
-  "https://tayka.shop"      
-].filter(Boolean);
+    'http://localhost:5173',
+    'https://tayka.shop',
+    'https://www.tayka.shop',
+    process.env.FRONTEND_URL,
+].filter(Boolean) as string[]
 
 export const corsConfig: CorsOptions = {
-  origin: function (origin, callback) {
-    // Si el origen está en la whitelist o no hay origen (como Postman)
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error("Error de CORS"))
-    }
-  }
+    origin: function(origin, callback) {
+        if (!origin || whitelist.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error(`CORS bloqueado para origen: ${origin}`))
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 }
