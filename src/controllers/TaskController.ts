@@ -125,4 +125,20 @@ export class TaskController {
             res.status(500).json({ error: 'Error al actualizar el estado de completado' })
         }
     }
+
+    // Reasigna una tarea a otro usuario o la deja sin asignar
+    static reassignTask = async (req: Request, res: Response) => {
+        try {
+            const { assignedTo } = req.body
+            req.task.assignedTo = (assignedTo && assignedTo !== '') ? assignedTo : null
+            await req.task.save()
+            const populatedTask = await req.task.populate('assignedTo', 'name email _id')
+            res.json({ 
+                message: 'Tarea reasignada correctamente',
+                task: populatedTask 
+            })
+        } catch (error) {
+            res.status(500).json({ error: 'Error al reasignar la tarea' })
+        }
+    }
 }

@@ -110,6 +110,15 @@ router.patch('/:projectId/tasks/:taskId/completed',
     handleInputErrors,
     TaskController.toggleCompleted
 )
+router.patch('/:projectId/tasks/:taskId/reassign',
+    hasAuthorization,
+    param('taskId').isMongoId().withMessage('ID no válido'),
+    body('assignedTo').optional({ nullable: true })
+        .custom((value) => !value || value === '' || /^[a-fA-F0-9]{24}$/.test(value))
+        .withMessage('ID de colaborador no válido'),
+    handleInputErrors,
+    TaskController.reassignTask
+)
 
 // Trazabilidad — Datasets
 router.post('/:projectId/datasets',
@@ -166,6 +175,7 @@ router.delete('/:projectId/decisions/:decisionId',
 router.get('/:projectId/report', ReportController.getProjectReport)
 
 // Team
+router.get('/:projectId/team/search', TeamMemberController.searchUsers)
 router.post('/:projectId/team/find',
     body('email').isEmail().toLowerCase().withMessage('E-mail no válido'),
     handleInputErrors,

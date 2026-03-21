@@ -4,7 +4,7 @@ import Project from '../models/Project'
 
 export class TeamMemberController {
     static findMemberByEmail = async (req: Request, res: Response) => {
-        const { email } = req.body
+        const { email } = req.body
 
         // Find user
         const user = await User.findOne({email}).select('id email name')
@@ -13,6 +13,28 @@ export class TeamMemberController {
             return res.status(404).json({error: error.message})
         }
         res.json(user)
+    }
+
+    static searchUsers = async (req: Request, res: Response) => {
+        const { q } = req.query
+        
+        if (!q || typeof q !== 'string' || q.length < 2) {
+            return res.json([])
+        }
+
+        const searchRegex = new RegExp(q, 'i')
+        
+        const users = await User.find({
+            $or: [
+                { email: searchRegex },
+                { name: searchRegex }
+            ]
+        })
+        .select('_id email name confirmed')
+        .limit(10)
+        
+        const confirmedUsers = users.filter(u => u.confirmed)
+        res.json(confirmedUsers)
     }
 
     static getProjecTeam = async (req: Request, res: Response) => {
