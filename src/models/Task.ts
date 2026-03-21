@@ -33,6 +33,9 @@ export interface ITask extends Document {
     finishedAt: Date | null      // se registra cuando llega a completed
     completedBy: { user: Types.ObjectId; status: TaskStatus }[]
     notes: Types.ObjectId[]
+    estimatedHours: number | null   // horas estimadas para la tarea
+    priority: 'high' | 'medium' | 'low' | null  // prioridad de la tarea
+    deadline: Date | null          // fecha límite de entrega
     createdAt: Date    
     updatedAt: Date
 }
@@ -59,7 +62,10 @@ export const TaskSchema: Schema = new Schema({
         user: { type: Types.ObjectId, ref: 'User', default: null },
         status: { type: String, enum: Object.values(taskStatus), default: taskStatus.PENDING }
     }],
-    notes: [{ type: Types.ObjectId, ref: 'Note' }]
+    notes: [{ type: Types.ObjectId, ref: 'Note' }],
+    estimatedHours: { type: Number, default: null },
+    priority: { type: String, enum: ['high', 'medium', 'low'], default: null },
+    deadline: { type: Date, default: null }
 }, { timestamps: true })
 
 TaskSchema.pre('deleteOne', { document: true }, async function () {

@@ -61,6 +61,14 @@ router.post('/:projectId/tasks',
     body('assignedTo').optional({ nullable: true })
         .custom((value) => !value || value === '' || /^[a-fA-F0-9]{24}$/.test(value))
         .withMessage('ID de colaborador no válido'),
+    body('estimatedHours').optional({ nullable: true })
+        .isNumeric().withMessage('Las horas estimadas deben ser un número')
+        .custom((value) => !value || value === '' || value >= 0)
+        .withMessage('Las horas estimadas no pueden ser negativas'),
+    body('priority').optional({ nullable: true })
+        .isIn(['high', 'medium', 'low']).withMessage('Prioridad no válida'),
+    body('deadline').optional({ nullable: true })
+        .isISO8601().withMessage('Fecha límite no válida'),
     handleInputErrors,
     TaskController.createTask
 )
@@ -82,6 +90,14 @@ router.put('/:projectId/tasks/:taskId',
     body('assignedTo').optional({ nullable: true })
         .custom((value) => !value || value === '' || /^[a-fA-F0-9]{24}$/.test(value))
         .withMessage('ID de colaborador no válido'),
+    body('estimatedHours').optional({ nullable: true })
+        .isNumeric().withMessage('Las horas estimadas deben ser un número')
+        .custom((value) => !value || value === '' || value >= 0)
+        .withMessage('Las horas estimadas no pueden ser negativas'),
+    body('priority').optional({ nullable: true })
+        .isIn(['high', 'medium', 'low']).withMessage('Prioridad no válida'),
+    body('deadline').optional({ nullable: true })
+        .isISO8601().withMessage('Fecha límite no válida'),
     handleInputErrors,
     TaskController.updateTask
 )
@@ -140,7 +156,7 @@ router.delete('/:projectId/datasets/:datasetId',
 // Trazabilidad — Experimentos
 router.post('/:projectId/experiments',
     body('name').notEmpty().withMessage('El nombre es obligatorio'),
-    body('model').notEmpty().withMessage('El modelo es obligatorio'),
+    body('algorithmModel').notEmpty().withMessage('El modelo es obligatorio'),
     body('parameters').notEmpty().withMessage('Los parámetros son obligatorios'),
     body('metric').notEmpty().withMessage('La métrica es obligatoria'),
     body('result').notEmpty().withMessage('El resultado es obligatorio'),
