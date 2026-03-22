@@ -5,7 +5,7 @@ export class TaskController {
 
     static createTask = async (req: Request, res: Response) => {
         try {
-            const { name, description, phase, status, assignedTo } = req.body
+            const { name, description, phase, status, assignedTo, estimatedHours, priority, deadline } = req.body
             const task = new Task({
                 name,
                 description,
@@ -13,6 +13,9 @@ export class TaskController {
                 status: status || 'pending',
                 completed: false,
                 assignedTo: (assignedTo && assignedTo !== '') ? assignedTo : null,
+                estimatedHours: estimatedHours || null,
+                priority: priority || null,
+                deadline: deadline ? new Date(deadline) : null,
                 project: req.project.id
             })
             req.project.tasks.push(task.id)
@@ -48,11 +51,20 @@ export class TaskController {
 
     static updateTask = async (req: Request, res: Response) => {
         try {
-            const { name, description, assignedTo } = req.body
+            const { name, description, assignedTo, estimatedHours, priority, deadline } = req.body
             req.task.name = name
             req.task.description = description
             if (assignedTo !== undefined) {
                 req.task.assignedTo = (assignedTo && assignedTo !== '') ? assignedTo : null
+            }
+            if (estimatedHours !== undefined) {
+                req.task.estimatedHours = estimatedHours || null
+            }
+            if (priority !== undefined) {
+                req.task.priority = priority || null
+            }
+            if (deadline !== undefined) {
+                req.task.deadline = deadline ? new Date(deadline) : null
             }
             await req.task.save()
             res.send('Tarea actualizada correctamente')
